@@ -1,11 +1,19 @@
 <script setup>
 import TableHead from "@/components/TableHead";
 import TableBody from "@/components/TableBody";
-import { defineProps } from "vue";
+import { defineProps, ref } from "vue";
+import MyPagination from "@/components/MyPagination";
 
 const props = defineProps({
   data: Array,
 });
+
+const currentPage = ref(1);
+
+const onChangePage = (page) => {
+  console.log("page", page);
+  currentPage.value = page;
+};
 </script>
 
 <template>
@@ -16,6 +24,11 @@ const props = defineProps({
           <TableHead />
           <TableBody :data="props.data" />
         </table>
+        <MyPagination
+          :currentPage="currentPage"
+          :totalPages="6"
+          :onChangePage="onChangePage"
+        />
       </div>
     </div>
   </div>
