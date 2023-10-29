@@ -16,11 +16,26 @@ const props = defineProps({
     required: true,
   },
 });
+const onPrev = () => {
+  if (props.currentPage > 1) {
+    props.onChangePage(props.currentPage - 1);
+  } else {
+    props.onChangePage(props.totalPages);
+  }
+};
+
+const onNext = () => {
+  if (props.currentPage < props.totalPages) {
+    props.onChangePage(props.currentPage + 1);
+  } else {
+    props.onChangePage(1);
+  }
+};
 </script>
 
 <template>
   <div class="pagination flex items-center">
-    <button>
+    <button @click="onPrev">
       <MyIcon />
     </button>
     <button
@@ -32,7 +47,7 @@ const props = defineProps({
     >
       {{ index }}
     </button>
-    <button>
+    <button @click="onNext">
       <NextIcon />
     </button>
   </div>

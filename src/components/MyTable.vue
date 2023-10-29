@@ -1,19 +1,26 @@
 <script setup>
 import TableHead from "@/components/TableHead";
 import TableBody from "@/components/TableBody";
-import { defineProps, ref } from "vue";
+import { defineProps, computed } from "vue";
 import MyPagination from "@/components/MyPagination";
 
 const props = defineProps({
   data: Array,
+  currentPage: Number,
+  onChangePage: Function,
 });
 
-const currentPage = ref(1);
-
-const onChangePage = (page) => {
-  console.log("page", page);
-  currentPage.value = page;
-};
+const paginationData = computed(() => {
+  console.log(
+    "props.data.slice(5 * props.currentPage, 5);",
+    props.data.slice(0, 5)
+  );
+  const pageSize = 5;
+  return props.data.slice(
+    pageSize * (props.currentPage - 1),
+    props.currentPage * pageSize
+  );
+});
 </script>
 
 <template>
@@ -22,12 +29,12 @@ const onChangePage = (page) => {
       <div class="w-full overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <TableHead />
-          <TableBody :data="props.data" />
+          <TableBody :data="paginationData" />
         </table>
         <MyPagination
-          :currentPage="currentPage"
-          :totalPages="6"
-          :onChangePage="onChangePage"
+          :currentPage="props.currentPage"
+          :totalPages="data.length / 5"
+          :onChangePage="props.onChangePage"
         />
       </div>
     </div>
