@@ -1,7 +1,7 @@
 <script setup>
 import TableHead from "@/components/TableHead";
 import TableBody from "@/components/TableBody";
-import { defineProps, computed } from "vue";
+import { defineProps, computed, ref } from "vue";
 import MyPagination from "@/components/MyPagination";
 
 const props = defineProps({
@@ -10,17 +10,68 @@ const props = defineProps({
   onChangePage: Function,
 });
 
+const reactiveData = ref(props.data);
+
 const paginationData = computed(() => {
-  console.log(
-    "props.data.slice(5 * props.currentPage, 5);",
-    props.data.slice(0, 5)
-  );
   const pageSize = 5;
-  return props.data.slice(
+  return reactiveData.value.slice(
     pageSize * (props.currentPage - 1),
     props.currentPage * pageSize
   );
 });
+const columnNames = ref([
+  {
+    title: "#",
+    sortingType: "asc",
+  },
+  {
+    title: "Name",
+    sortingType: "asc",
+  },
+  {
+    title: "Age",
+    sortingType: "asc",
+  },
+  {
+    title: "Email",
+    sortingType: "asc",
+  },
+]);
+
+const onChangeSortType = (sortType, columnName) => {
+  const columnNameLowerCase = columnName.toLowerCase();
+
+  reactiveData.value = reactiveData.value.slice().sort((a, b) => {
+    const nameA = a[columnNameLowerCase];
+    const nameB = b[columnNameLowerCase];
+
+    if (sortType === "asc") {
+      if (nameA > nameB) {
+        return 1;
+      }
+      if (nameA < nameB) {
+        return -1;
+      }
+    } else if (sortType === "desc") {
+      if (nameA < nameB) {
+        return 1;
+      }
+      if (nameA > nameB) {
+        return -1;
+      }
+    }
+
+    return 0;
+  });
+
+  columnNames.value = columnNames.value.map((column) => {
+    if (column.title === columnName) {
+      return { ...column, sortingType: sortType };
+    }
+
+    return column;
+  });
+};
 </script>
 
 <template>
@@ -28,7 +79,10 @@ const paginationData = computed(() => {
     <div class="w-full overflow-hidden rounded-lg shadow-xs">
       <div class="w-full overflow-x-auto">
         <table class="w-full whitespace-nowrap">
-          <TableHead />
+          <TableHead
+            :columnNames="columnNames"
+            :onChangeSortType="onChangeSortType"
+          />
           <TableBody :data="paginationData" />
         </table>
         <MyPagination

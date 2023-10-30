@@ -40,7 +40,6 @@ const data = reactive(mockData);
 const currentPage = ref(1);
 
 const onChangePage = (page) => {
-  console.log("page", page);
   currentPage.value = page;
 };
 </script>
